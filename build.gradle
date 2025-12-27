@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+    id 'application'
+    id 'jacoco'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+ext {
+    junitVersion = '5.11.0'
+    assertjVersion = '3.26.3'
+    javaVersion = '24'
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation'org.junit.jupiter:junit-jupiter:5.10.0'
+    testImplementation'org.assertj:assertj-core:3.24.2'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test  // отчёт генерируется после выполнения тестов
+    reports {
+        xml.required = false
+        csv.required = false
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir('reports/jacoco/test/html')
+    }
+}
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80
+            }
+        }
+    }
+}
+check {
+    dependsOn jacocoTestCoverageVerification
+}
