@@ -41,7 +41,5 @@ class LeadTest {
     String toString = lead.toString();
     Assertions.assertEquals("Lead {id= L1, email= test@example.com, phone= +71234567890, company= " +
       "TestCorp, status= NEW}", toString);
-
-
   }
 }
