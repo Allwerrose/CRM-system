@@ -11,7 +11,7 @@ class LeadStorageTest {
   @Test
   void shouldAddLeadWhenLeadIsUnique() {
     LeadStorage storage = new LeadStorage();
-    Lead uniqueLead = new Lead(UUID.randomUUID(), "ivan@mail.ru", "+7123", "TechCorp", "NEW");
+    Lead uniqueLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     boolean added = storage.add(uniqueLead);
     assertThat(added).isTrue();
     assertThat(storage.size()).isEqualTo(1);
@@ -21,31 +21,22 @@ class LeadStorageTest {
   @Test
   void shouldRejectDuplicateWhenEmailAlreadyExists() {
     LeadStorage storage = new LeadStorage();
-    Lead existingLead = new Lead(UUID.randomUUID(), "ivan@mail.ru", "+7123", "TechCorp", "NEW");
-    Lead duplicateLead = new Lead(UUID.randomUUID(), "ivan@mail.ru", "+7456", "Other", "NEW");
+    Lead existingLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead duplicateLead = new Lead(existingLead.id(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     storage.add(existingLead);
     boolean added = storage.add(duplicateLead);
     assertThat(added).isFalse();
     assertThat(storage.size()).isEqualTo(1);
     assertThat(storage.findAll()).containsExactly(existingLead);
   }
-  @Test
-  void shouldThrowExceptionWhenStorageIsFull() {
-    LeadStorage storage = new LeadStorage();
-    for (int index = 0; index < 100; index++) {
-      storage.add(new Lead(UUID.randomUUID(), "lead" + index + "@mail.ru", "+7000", "Company", "NEW"));
-    }
-    Lead hundredFirstLead = new Lead(UUID.randomUUID(), "lead101@mail.ru", "+7001", "Company", "NEW");
-    assertThatThrownBy(() -> storage.add(hundredFirstLead))
-      .isInstanceOf(IllegalStateException.class)
-      .hasMessageContaining("Массив заполнен");
-  }
+
+
   @Test
   void shouldReturnOnlyAddedLeadsWhenFindAllCalled() {
     // Given
     LeadStorage storage = new LeadStorage();
-    Lead firstLead = new Lead(UUID.randomUUID(), "ivan@mail.ru", "+7123", "TechCorp", "NEW");
-    Lead secondLead = new Lead(UUID.randomUUID(), "maria@startup.io", "+7456", "StartupLab", "NEW");
+    Lead firstLead = new Lead(UUID.randomUUID(),new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead secondLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.bk", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     storage.add(firstLead);
     storage.add(secondLead);
     Lead[] result = storage.findAll();

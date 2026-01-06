@@ -1,14 +1,31 @@
 package ru.mentee.power.crm.domain;
 
+import java.util.Objects;
 import java.util.UUID;
 
-public record Lead (UUID id, String email, String phone, String company, String status) {
+public record Lead (UUID id, Contact contact, String company,LeadStatus status) {
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    Lead lead = (Lead) o;
+    return Objects.equals(id, lead.id) && Objects.equals(company, lead.company) && Objects.equals(contact, lead.contact) && status == lead.status;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, contact, company, status);
+  }
+
   public Lead {
-    if (email == null || email.isBlank()) {
-      throw new IllegalArgumentException("Email cannot be blank");
+    if (id == null) {
+      throw new IllegalArgumentException("id cannot be null");
     }
-    if (status == null) {
-      throw new IllegalArgumentException("Status cannot be null");
+    if (contact == null) {
+      throw new IllegalArgumentException("Contact cannot be null");
     }
+    if (contact.phone() == null) {
+      throw new IllegalArgumentException("Phone cannot be null");
+    }
+
   }
 }

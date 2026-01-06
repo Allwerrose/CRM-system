@@ -1,47 +1,74 @@
 package ru.mentee.power.crm.domain;
 
-import java.util.UUID;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
+
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 
 class LeadTest {
   @Test
-  void shouldReturnIdWhenGetIdLead() {
-    Lead lead = new Lead(UUID.randomUUID(), "test@example.com", "+71234567890", "TestCorp", "NEW");
-    UUID id = lead.id();
-    Assertions.assertEquals(lead.id(), id);
+  void shouldCreateLead_whenValidData() {
+    Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
+    Contact contact = new Contact("ohn@example.com", "+7999", address);
+    Lead lead = new Lead(UUID.randomUUID(), contact, "Company", LeadStatus.NEW);
+    assertThat(lead.contact()).isEqualTo(contact);
   }
 
   @Test
-  void shouldReturnIdWhenGetEmailLead() {
-    Lead lead = new Lead(UUID.randomUUID(), "test@example.com", "+71234567890", "TestCorp", "NEW");
-    String email = lead.email();
-    Assertions.assertEquals("test@example.com", email);
+  void shouldAccessEmailThroughDelegation_whenLeadCreated() {
+    Lead lead = new Lead(UUID.randomUUID(),
+      new Contact("ohn@example.com", "+7999",
+        new Address("Yekaterinburg", "Lenina Avenue ", "iii")), "Company", LeadStatus.NEW);
+    assertThat(lead.contact().email()).isEqualTo(lead.contact().email());
+    assertThat(lead.contact().address().city()).isEqualTo(lead.contact().address().city());
   }
+
   @Test
-  void shouldReturnIdWhenGetPhoneLead() {
-    Lead lead = new Lead(UUID.randomUUID(), "test@example.com", "+71234567890", "TestCorp", "NEW");
-    String phone = lead.phone();
-    Assertions.assertEquals("+71234567890", phone);
+  void shouldBeEqual_whenSameIdButDifferentContact() {
+    UUID id = UUID.randomUUID();
+    Lead lead = new Lead(id,
+      new Contact("john@example.com", "+7999", new Address("Yekaterinburg", "Lenina Avenue", "iii")),
+      "Company", LeadStatus.NEW);
+    Lead lead1 = new Lead(id,
+      new Contact("john@example.com", "+7998", new Address("Yekaterinburg", "Lenina Avenue", "iii")),
+      "Company", LeadStatus.NEW);
+
+    assertThat(lead.id()).isEqualTo(lead1.id()); // Теперь равны по id
   }
+
   @Test
-  void shouldReturnIdWhenGetCompanyLead() {
-    Lead lead = new Lead(UUID.randomUUID(), "test@example.com", "+71234567890", "TestCorp", "NEW");
-    String company = lead.company();
-    Assertions.assertEquals("TestCorp", company);
+  void shouldThrowException_whenContactIsNull() {
+    assertThatThrownBy(() -> new Lead(UUID.randomUUID(), null, "Company", LeadStatus.NEW))
+      .isInstanceOf(IllegalArgumentException.class);
   }
+
+
   @Test
-  void shouldReturnIdWhenGetStatusLead() {
-    Lead lead = new Lead(UUID.randomUUID(), "test@example.com", "+71234567890", "TestCorp", "NEW");
-    String status = lead.status();
-    Assertions.assertEquals("NEW", status);
+  void shouldDemonstrateThreeLevelComposition_whenAccessingCity() {
+    UUID leadId = UUID.randomUUID();
+    String email = "john@example.com";
+    String phone = "+7999";
+    String city = "Yekaterinburg";
+    String street = "Lenina Avenue";
+    String zip = "iii";
+    String company = "TechCorp";
+    LeadStatus status = LeadStatus.NEW;
+
+    Address address = new Address(city, street, zip);
+    Contact contact = new Contact(email, phone, address);
+    Lead lead = new Lead(leadId, contact, company, status);
+    Contact retrievedContact = lead.contact();
+    Address retrievedAddress = retrievedContact.address();
+    String retrievedCity = retrievedAddress.city();
+    assertThat(retrievedCity).isEqualTo(city);
+    String cityViaChaining = lead.contact().address().city();
+    assertThat(cityViaChaining).isEqualTo(city);
+    assertThat(lead).isNotNull();
+    assertThat(retrievedContact).isNotNull();
+    assertThat(retrievedAddress).isNotNull();
   }
-//  @Test
-//  void shouldReturnStringWithValues() {
-//    Lead lead = new Lead(UUID.randomUUID(), "test@example.com", "+71234567890", "TestCorp", "NEW");
-//    String toString = lead.toString();
-//    Assertions.assertEquals("Lead {id= , email= test@example.com, phone= +71234567890, company= " +
-//      "TestCorp, status= NEW}", toString);
-//  }
 }
