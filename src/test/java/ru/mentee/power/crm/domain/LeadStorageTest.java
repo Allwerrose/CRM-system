@@ -33,7 +33,6 @@ class LeadStorageTest {
 
   @Test
   void shouldReturnOnlyAddedLeadsWhenFindAllCalled() {
-    // Given
     LeadStorage storage = new LeadStorage();
     Lead firstLead = new Lead(UUID.randomUUID(),new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead secondLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.bk", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
