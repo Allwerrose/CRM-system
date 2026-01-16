@@ -23,7 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
     void shouldDemonstrateContactReuse_acrossLeadAndCustomer() {
       Contact sharedContact = new Contact("alice@example.com", "+7888",
         new Address("Saint Petersburg", "Nevsky Prospect", "789"));
-      Lead lead = new Lead(UUID.randomUUID(), sharedContact, "TechCorp", LeadStatus.NEW);
+      Lead lead = new Lead(UUID.randomUUID().toString(), sharedContact, "TechCorp", LeadStatus.NEW);
       Customer customer = new Customer(UUID.randomUUID(), sharedContact, new Address("Kazan", "Bauman Street", "101"), "GOLD");
       assertThat(lead.contact()).isSameAs(sharedContact);
       assertThat(customer.contact()).isSameAs(sharedContact);

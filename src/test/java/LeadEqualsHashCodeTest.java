@@ -13,12 +13,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class LeadEqualsHashCodeTest {
   @Test
   void shouldBeReflexiveWhenEqualsCalledOnSameObject() {
-    Lead lead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead lead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     assertThat(lead).isEqualTo(lead);
   }
   @Test
   void shouldBeSymmetric_whenEqualsCalledOnTwoObjects() {
-    Lead firstLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead firstLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead secondLead = new Lead(firstLead.id(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     assertThat(firstLead).isEqualTo(secondLead);
     assertThat(secondLead).isEqualTo(firstLead);
@@ -26,7 +26,7 @@ public class LeadEqualsHashCodeTest {
 
   @Test
   void shouldBeTransitive_whenEqualsChainOfThreeObjects() {
-    Lead firstLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead firstLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead secondLead = new Lead(firstLead.id(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead thirdLead = new Lead(secondLead.id(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     assertThat(firstLead).isEqualTo(secondLead);
@@ -36,7 +36,7 @@ public class LeadEqualsHashCodeTest {
 
   @Test
   void shouldBeConsistent_whenEqualsCalledMultipleTimes() {
-    Lead firstLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead firstLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead secondLead = new Lead(firstLead.id(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     assertThat(firstLead).isEqualTo(secondLead);
     assertThat(firstLead).isEqualTo(secondLead);
@@ -45,13 +45,13 @@ public class LeadEqualsHashCodeTest {
 
   @Test
   void shouldReturnFalse_whenEqualsComparedWithNull() {
-    Lead lead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead lead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     assertThat(lead).isNotEqualTo(null);
   }
 
   @Test
   void shouldHaveSameHashCode_whenObjectsAreEqual() {
-    Lead firstLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead firstLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead secondLead = new Lead(firstLead.id(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     assertThat(firstLead).isEqualTo(secondLead);
     assertThat(firstLead.hashCode()).isEqualTo(secondLead.hashCode());
@@ -59,7 +59,7 @@ public class LeadEqualsHashCodeTest {
 
   @Test
   void shouldWorkInHashMap_whenLeadUsedAsKey() {
-    Lead keyLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead keyLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead lookupLead = new Lead(keyLead.id(),new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Map<Lead, String> map = new HashMap<>();
     map.put(keyLead, "CONTACTED");
@@ -69,8 +69,8 @@ public class LeadEqualsHashCodeTest {
 
   @Test
   void shouldNotBeEqual_whenIdsAreDifferent() {
-    Lead firstLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
-    Lead differentLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead firstLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead differentLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     assertThat(firstLead).isNotEqualTo(differentLead);
   }
 }

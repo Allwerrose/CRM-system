@@ -1,9 +1,8 @@
 package ru.mentee.power.crm.domain;
 
 import java.util.Objects;
-import java.util.UUID;
 
-public record Lead (UUID id, Contact contact, String company,LeadStatus status) {
+public record Lead (String id, Contact contact, String company,LeadStatus status) {
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;

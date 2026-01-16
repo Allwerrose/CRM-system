@@ -14,13 +14,13 @@ class LeadTest {
   void shouldCreateLead_whenValidData() {
     Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
     Contact contact = new Contact("ohn@example.com", "+7999", address);
-    Lead lead = new Lead(UUID.randomUUID(), contact, "Company", LeadStatus.NEW);
+    Lead lead = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
     assertThat(lead.contact()).isEqualTo(contact);
   }
 
   @Test
   void shouldAccessEmailThroughDelegation_whenLeadCreated() {
-    Lead lead = new Lead(UUID.randomUUID(),
+    Lead lead = new Lead(UUID.randomUUID().toString(),
       new Contact("ohn@example.com", "+7999",
         new Address("Yekaterinburg", "Lenina Avenue ", "iii")), "Company", LeadStatus.NEW);
     assertThat(lead.contact().email()).isEqualTo(lead.contact().email());
@@ -29,7 +29,7 @@ class LeadTest {
 
   @Test
   void shouldBeEqual_whenSameIdButDifferentContact() {
-    UUID id = UUID.randomUUID();
+    String id = UUID.randomUUID().toString();
     Lead lead = new Lead(id,
       new Contact("john@example.com", "+7999", new Address("Yekaterinburg", "Lenina Avenue", "iii")),
       "Company", LeadStatus.NEW);
@@ -42,14 +42,14 @@ class LeadTest {
 
   @Test
   void shouldThrowException_whenContactIsNull() {
-    assertThatThrownBy(() -> new Lead(UUID.randomUUID(), null, "Company", LeadStatus.NEW))
+    assertThatThrownBy(() -> new Lead(UUID.randomUUID().toString(), null, "Company", LeadStatus.NEW))
       .isInstanceOf(IllegalArgumentException.class);
   }
 
 
   @Test
   void shouldDemonstrateThreeLevelComposition_whenAccessingCity() {
-    UUID leadId = UUID.randomUUID();
+    String leadId = UUID.randomUUID().toString();
     String email = "john@example.com";
     String phone = "+7999";
     String city = "Yekaterinburg";
