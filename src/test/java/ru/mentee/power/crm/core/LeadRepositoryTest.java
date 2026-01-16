@@ -1,109 +1,123 @@
 package ru.mentee.power.crm.core;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.mentee.power.crm.domain.*;
+import ru.mentee.power.crm.domain.Address;
+import ru.mentee.power.crm.domain.Contact;
+import ru.mentee.power.crm.domain.Lead;
+import ru.mentee.power.crm.domain.LeadStatus;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-import static java.beans.Beans.isInstanceOf;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.assertj.core.api.Assertions.*;
 
 class LeadRepositoryTest {
-  @Test
-  void shouldDeduplicateLeadsById() {
-    LeadRepository leadRepository = new LeadRepository();
-    Contact sharedContact = new Contact("alice@example.com", "+7888",
-      new Address("Saint Petersburg", "Nevsky Prospect", "789"));
-    Lead lead = new Lead(UUID.randomUUID(), sharedContact, "TechCorp", LeadStatus.NEW);
-    leadRepository.add(lead);
-    boolean added = leadRepository.add(lead);
-    assertThat(added).isFalse();
-    assertThat(leadRepository.size()).isEqualTo(1);
+  private LeadRepository repository;
 
+  @BeforeEach
+  void setUp() {
+    repository = new LeadRepository();
   }
 
   @Test
-  void shouldAllowDifferentLeads() {
-    LeadRepository leadRepository = new LeadRepository();
-    Contact sharedContact = new Contact("alice@example.com", "+7888",
-      new Address("Saint Petersburg", "Nevsky Prospect", "789"));
-    Lead lead = new Lead(UUID.randomUUID(), sharedContact, "TechCorp", LeadStatus.NEW);
-    Lead lead1 = new Lead(UUID.randomUUID(), sharedContact, "TechCorp", LeadStatus.NEW);
-    leadRepository.add(lead);
-    boolean added = leadRepository.add(lead1);
-    assertThat(added).isTrue();
-    assertThat(leadRepository.size()).isEqualTo(2);
-
+  void shouldSaveAndFindLeadById_whenLeadSaved() {
+    Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
+    Contact contact = new Contact("ohn@example.com", "+7999", address);
+    Lead lead = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
+    repository.save(lead);
+    assertThat( repository.findById(lead.id())).isNotNull();
   }
 
   @Test
-  void shouldFindExistingLead() {
-    // TODO: Given - добавить лид в репозиторий
-    // TODO: When - вызвать contains с тем же лидом
-    // TODO: Then - проверить что contains вернул true
-    LeadRepository leadRepository = new LeadRepository();
-    Lead existingLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
-    leadRepository.add(existingLead);
-    boolean added = leadRepository.contains(existingLead);
-    assertThat(added).isTrue();
+  void shouldReturnNull_whenLeadNotFound() {
+    assertThat(repository.findById("unknow-id")).isNull();
   }
 
   @Test
-  void shouldReturnUnmodifiableSet() {
-    // TODO: Given - добавить лид в репозиторий
-    // TODO: When - вызвать findAll и попытаться изменить результат
-    // TODO: Then - проверить что выбрасывается UnsupportedOperationException
-    LeadRepository leadRepository = new LeadRepository();
-    Lead existingLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
-    leadRepository.add(existingLead);
-    assertThatThrownBy(() -> {
-      leadRepository.findAll().add(new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW));
-    })
-      .isInstanceOf(UnsupportedOperationException.class);
+  void shouldReturnAllLeads_whenMultipleLeadsSaved() {
+    Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
+    Contact contact = new Contact("ohn@example.com", "+7999", address);
+    Lead lead = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
+    Lead lead1 = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
+    Lead lead2 = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
+    repository.save(lead);
+    repository.save(lead1);
+    repository.save(lead2);
+    assertThat(repository.findAll()).hasSize(3);
   }
 
   @Test
-  void shouldPerformFasterThanArrayList() {
-    int collectionSize = 10000;
-    int iterations = 1000;
+  void shouldDeleteLead_whenLeadExists() {
+    Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
+    Contact contact = new Contact("ohn@example.com", "+7999", address);
+    Lead lead = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
+    repository.save(lead);
+    repository.delete(lead.id());
+    assertThat(repository.findById(lead.id())).isNull();
+    assertThat(repository.size() == 0).isEqualTo(true);
+  }
 
-    Set<Lead> hashSet = new HashSet<>();
-    List<Lead> arrayList = new ArrayList<>();
-
-    for (int i = 0; i < collectionSize; i++) {
-      Lead lead = new Lead(UUID.randomUUID(),  new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
-      hashSet.add(lead);
-      arrayList.add(lead);
+  @Test
+  void shouldOverwriteLead_whenSaveWithSameId() {
+    Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
+    Contact contact = new Contact("ohn@example.com", "+7999", address);
+    Lead lead = new Lead("lead-1", contact, "Company", LeadStatus.NEW);
+    Contact contact1 = new Contact("ohn@example.bk", "+7999", address);
+    Lead lead1 = new Lead("lead-1", contact1, "Company", LeadStatus.NEW);
+    repository.save(lead);
+    repository.save(lead1);
+    assertThat(repository.findById("lead-1")).isEqualTo(lead1);
+    assertThat(repository.size()).isEqualTo(1);
+  }
+  @Test
+  void shouldFindFasterWithMap_thanWithListFilter() {
+    // Given: Создать 1000 лидов
+    List<Lead> leadList = new ArrayList<>();
+    for (int i = 0; i < 1000; i++) {
+      String id = UUID.randomUUID().toString();
+      Contact contact = new Contact(
+        "email" + i + "@test.com",
+        "+7" + i,
+        new Address("City" + i, "Street" + i, "ZIP" + i)
+      );
+      Lead lead = new Lead(id, contact, "Company" + i, LeadStatus.NEW);
+      repository.save(lead);
+      leadList.add(lead);
     }
 
-    Lead target = arrayList.get(collectionSize / 2);
+    String targetId = "lead-500";  // Средний элемент
 
-    long hashSetTotal = 0;
-    long arrayListTotal = 0;
-    int warmup = 100;
-    for (int i = 0; i < warmup; i++) {
-      hashSet.contains(target);
-      arrayList.contains(target);
-    }
-    for (int i = 0; i < iterations; i++) {
-      long start = System.nanoTime();
-      hashSet.contains(target);
-      hashSetTotal += System.nanoTime() - start;
-      start = System.nanoTime();
-      arrayList.contains(target);
-      arrayListTotal += System.nanoTime() - start;
-    }
+    // When: Поиск через Map
+    long mapStart = System.nanoTime();
+    Lead foundInMap = repository.findById(targetId);
+    long mapDuration = System.nanoTime() - mapStart;
 
-    double hashSetAvg = hashSetTotal * 1.0 / iterations;
-    double arrayListAvg = arrayListTotal * 1.0 / iterations;
-    double ratio = arrayListAvg / hashSetAvg;
+    // When: Поиск через List.stream().filter()
+    long listStart = System.nanoTime();
+    Lead foundInList = leadList.stream()
+      .filter(lead -> lead.id().equals(targetId))
+      .findFirst()
+      .orElse(null);
+    long listDuration = System.nanoTime() - listStart;
 
-    System.out.printf("HashSet average: %.2f ns%n", hashSetAvg);
-    System.out.printf("ArrayList average: %.2f ns%n", arrayListAvg);
-    System.out.printf("Performance ratio: %.2fx%n", ratio);
+    // Then: Map должен быть минимум в 10 раз быстрее
+    assertThat(foundInMap).isEqualTo(foundInList);
+    assertThat(listDuration).isGreaterThan(mapDuration * 10);
 
+    System.out.println("Map поиск: " + mapDuration + " ns");
+    System.out.println("List поиск: " + listDuration + " ns");
+    System.out.println("Ускорение: " + (listDuration / mapDuration) + "x");
+  }
+  @Test
+  void shouldSaveBothLeads_evenWithSameEmailAndPhone_becauseRepositoryDoesNotCheckBusinessRules() {
+    Contact sharedContact = new Contact("ivan@mail.ru", "+79001234567",
+      new Address("Moscow", "Tverskaya 1", "101000"));
+    Lead originalLead = new Lead(UUID.randomUUID().toString(), sharedContact, "Acme Corp", LeadStatus.NEW);
+    Lead duplicateLead = new Lead(UUID.randomUUID().toString(), sharedContact, "TechCorp", LeadStatus.NEW);
+    repository.save(originalLead);
+    repository.save(duplicateLead);
+    assertThat(repository.size()).isEqualTo(2);
   }
 }

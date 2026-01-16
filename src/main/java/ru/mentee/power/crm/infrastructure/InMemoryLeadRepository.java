@@ -19,27 +19,34 @@ class InMemoryLeadRepository implements Repository <Lead> {
     return entity;
   }
 
+
   @Override
    public void remove(UUID id) {
-     if (id == null) {
-       throw new IllegalArgumentException("ID cannot be null");
-     }
-
-     storage.removeIf(lead -> lead.id().equals(id));
+    if (id == null) {
+      throw new IllegalArgumentException("ID cannot be null");
+    }
+    storage.removeIf(lead -> lead.id().equals(id.toString()));
    }
+@Override
+  public Optional<Lead> findById(UUID id) {
+    if (id == null) {
+      return Optional.empty();
+    }
 
-   @Override
-   public Optional<Lead> findById(UUID id) {
-     if (id == null) {
-       return Optional.empty();
-     }
-
-     return storage.stream()
-       .filter(lead -> lead.id().equals(id))
-       .findFirst();
-   }
-
-   @Override
+    // Используем stream для поиска в List
+    return storage.stream()
+      .filter(lead -> {
+        String leadIdString = lead.id();
+        try {
+          UUID leadUuid = UUID.fromString(leadIdString);
+          return leadUuid.equals(id);
+        } catch (IllegalArgumentException e) {
+          return false;
+        }
+      })
+      .findFirst();
+  }
+  @Override
    public List<Lead> findAll() {
      return List.copyOf(storage);
    }

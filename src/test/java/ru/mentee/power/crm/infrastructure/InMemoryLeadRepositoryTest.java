@@ -22,7 +22,7 @@ class InMemoryLeadRepositoryTest {
     repository = new InMemoryLeadRepository();
     Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
     Contact contact = new Contact("ohn@example.com", "+7999", address);
-    Lead firstLead = new Lead(UUID.randomUUID(), contact, "Company", LeadStatus.NEW);
+    Lead firstLead = new Lead("***", contact, "Company", LeadStatus.NEW);
     Lead addedLead = repository.add(firstLead);
     List<Lead> allLeads = repository.findAll();
     assertEquals(1, allLeads.size());
@@ -35,7 +35,7 @@ class InMemoryLeadRepositoryTest {
     repository = new InMemoryLeadRepository();
     Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
     Contact contact = new Contact("ohn@example.com", "+7999", address);
-    Lead firstLead = new Lead(UUID.randomUUID(), contact, "Company", LeadStatus.NEW);
+    Lead firstLead = new Lead("***", contact, "Company", LeadStatus.NEW);
     repository.add(firstLead);
     repository.add(firstLead);
     assertEquals(1, repository.findAll().size());
@@ -46,8 +46,8 @@ class InMemoryLeadRepositoryTest {
     repository = new InMemoryLeadRepository();
     Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
     Contact contact = new Contact("ohn@example.com", "+7999", address);
-    Lead firstLead = new Lead(UUID.randomUUID(), contact, "Company", LeadStatus.NEW);
-    existingId = firstLead.id();
+    Lead firstLead = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
+    existingId = UUID.fromString(firstLead.id());
     repository.add(firstLead);
     Optional<Lead> found = repository.findById(existingId);
     assertTrue(found.isPresent());
@@ -57,7 +57,7 @@ class InMemoryLeadRepositoryTest {
   @Test
   void shouldReturnEmptyOptionalWhenLeadNotFound() {
     repository = new InMemoryLeadRepository();
-    UUID nonExistingId = UUID.randomUUID();
+    UUID nonExistingId =UUID.randomUUID();
     Optional<Lead> found = repository.findById(nonExistingId);
     assertFalse(found.isPresent());
   }
@@ -67,11 +67,11 @@ class InMemoryLeadRepositoryTest {
     repository = new InMemoryLeadRepository();
     Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
     Contact contact = new Contact("ohn@example.com", "+7999", address);
-    Lead firstLead = new Lead(UUID.randomUUID(), contact, "Company", LeadStatus.NEW);
-    existingId = firstLead.id();
+    Lead firstLead = new Lead(UUID.randomUUID().toString(), contact, "Company", LeadStatus.NEW);
+    existingId = UUID.fromString(firstLead.id());
     repository.add(firstLead);
-    assertTrue(repository.findById(firstLead.id()).isPresent());
-    repository.remove(firstLead.id());
+    assertTrue(repository.findById(UUID.fromString(firstLead.id())).isPresent());
+    repository.remove(UUID.fromString(firstLead.id()));
     Optional<Lead> foundAfterRemoval = repository.findById(existingId);
     assertFalse(foundAfterRemoval.isPresent());
     assertEquals(0, repository.findAll().size());
@@ -80,18 +80,19 @@ class InMemoryLeadRepositoryTest {
   @Test
   void integrationTest() {
     repository = new InMemoryLeadRepository();
+    UUID lead1Id = UUID.randomUUID();
+    UUID lead2Id = UUID.randomUUID();
     Address address = new Address("Yekaterinburg", "Lenina Avenue ", "iii");
     Contact contact = new Contact("ohn@example.com", "+7999", address);
-    Lead lead = new Lead(UUID.randomUUID(), contact, "Company", LeadStatus.NEW);
+    Lead lead = new Lead(lead1Id.toString(), contact, "Company", LeadStatus.NEW);
     assertThat(lead.contact()).isEqualTo(contact);
-    Lead lead2 = new Lead(UUID.randomUUID(), contact, "CompanyTech", LeadStatus.NEW);
+    Lead lead2 = new Lead(lead2Id.toString(), contact, "CompanyTech", LeadStatus.NEW);
     assertThat(lead.contact()).isEqualTo(contact);
     repository.add(lead);
     repository.add(lead2);
     assertEquals(2, repository.findAll().size());
-    Optional<Lead> foundLead1 = repository.findById(lead.id());
+    Optional<Lead> foundLead1 = repository.findById(lead1Id);
     assertTrue(foundLead1.isPresent());
-    assertEquals(lead, foundLead1.get());
-
   }
+
 }

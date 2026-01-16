@@ -5,13 +5,12 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class LeadStorageTest {
   @Test
   void shouldAddLeadWhenLeadIsUnique() {
     LeadStorage storage = new LeadStorage();
-    Lead uniqueLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead uniqueLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     boolean added = storage.add(uniqueLead);
     assertThat(added).isTrue();
     assertThat(storage.size()).isEqualTo(1);
@@ -21,7 +20,7 @@ class LeadStorageTest {
   @Test
   void shouldRejectDuplicateWhenEmailAlreadyExists() {
     LeadStorage storage = new LeadStorage();
-    Lead existingLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead existingLead = new Lead(UUID.randomUUID().toString(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     Lead duplicateLead = new Lead(existingLead.id(), new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     storage.add(existingLead);
     boolean added = storage.add(duplicateLead);
@@ -34,8 +33,8 @@ class LeadStorageTest {
   @Test
   void shouldReturnOnlyAddedLeadsWhenFindAllCalled() {
     LeadStorage storage = new LeadStorage();
-    Lead firstLead = new Lead(UUID.randomUUID(),new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
-    Lead secondLead = new Lead(UUID.randomUUID(), new Contact("ivan@mail.bk", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead firstLead = new Lead(UUID.randomUUID().toString(),new Contact("ivan@mail.ru", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
+    Lead secondLead = new Lead(firstLead.id(), new Contact("ivan@mail.bk", "+7123", new Address("Moscow", "Lenina Avenue", "111")), "TechCorp", LeadStatus.NEW);
     storage.add(firstLead);
     storage.add(secondLead);
     Lead[] result = storage.findAll();
