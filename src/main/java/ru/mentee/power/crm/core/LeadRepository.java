@@ -5,9 +5,11 @@ import java.util.*;
 
 public class LeadRepository {
   private final Map<String, Lead> storage = new HashMap<>();
+  private final Map<String, UUID> emailIndex = new HashMap<>();
 
-  public void save(Lead lead) {
+  public Lead save(Lead lead) {
      storage.put(lead.id(), lead);
+    return lead;
   }
 
   public Lead findById(String id) {
@@ -31,4 +33,12 @@ public class LeadRepository {
   public int size() {
     return storage.size();
   }
+  public Optional<Lead> findByEmail(String email){
+    UUID id = emailIndex.get(email);
+    if (id == null) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(storage.get(id));
+  }
+
 }

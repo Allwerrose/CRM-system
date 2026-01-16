@@ -10,5 +10,7 @@ public interface Repository<T> {
   Lead add(T entity);
   void remove(UUID id);
   Optional<T> findById(UUID id);
+  Optional<T> findByEmail(String email);
   List<T> findAll();
+  void delete(UUID id);
 }

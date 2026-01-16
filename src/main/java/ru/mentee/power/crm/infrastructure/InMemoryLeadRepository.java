@@ -1,53 +1,58 @@
 package ru.mentee.power.crm.infrastructure;
 
+import ru.mentee.power.crm.core.LeadRepository;
 import ru.mentee.power.crm.domain.Lead;
 import ru.mentee.power.crm.domain.repository.Repository;
 
 import java.util.*;
 
-class InMemoryLeadRepository implements Repository <Lead> {
- private final ArrayList<Lead> storage =  new ArrayList<>();
+public class InMemoryLeadRepository extends LeadRepository implements Repository <Lead> {
+
+  private final Map<UUID, Lead> storage = new HashMap<>();
+  private final Map<String, UUID> emailIndex = new HashMap<>();
 
   @Override
-  public Lead add(Lead entity) {
-    if (entity == null) {
-      throw new IllegalArgumentException("Lead cannot be null");
-    }
-    if (!storage.contains(entity)) {
-      storage.add(entity);
-    }
-    return entity;
+  public Lead save(Lead lead) {
+    // Просто сохраняем — никакой бизнес-логики!
+    storage.put(UUID.fromString(lead.id()), lead);
+    emailIndex.put(lead.contact().email(), UUID.fromString(lead.id()));
+    return lead;
   }
 
+  @Override
+  public Optional<Lead> findById(UUID id) {
+    return Optional.ofNullable(storage.get(id));
+  }
 
   @Override
-   public void remove(UUID id) {
-    if (id == null) {
-      throw new IllegalArgumentException("ID cannot be null");
-    }
-    storage.removeIf(lead -> lead.id().equals(id.toString()));
-   }
-@Override
-  public Optional<Lead> findById(UUID id) {
+  public Optional<Lead> findByEmail(String email) {
+    UUID id = emailIndex.get(email);
     if (id == null) {
       return Optional.empty();
     }
-
-    // Используем stream для поиска в List
-    return storage.stream()
-      .filter(lead -> {
-        String leadIdString = lead.id();
-        try {
-          UUID leadUuid = UUID.fromString(leadIdString);
-          return leadUuid.equals(id);
-        } catch (IllegalArgumentException e) {
-          return false;
-        }
-      })
-      .findFirst();
+    return Optional.ofNullable(storage.get(id));
   }
+
   @Override
-   public List<Lead> findAll() {
-     return List.copyOf(storage);
-   }
- }
+  public List<Lead> findAll() {
+    return new ArrayList<>(storage.values());
+  }
+
+  @Override
+  public void delete(UUID id) {
+    Lead lead = storage.remove(id);
+    if (lead != null) {
+      emailIndex.remove(lead.contact().email());
+    }
+  }
+
+  @Override
+  public Lead add(Lead entity) {
+    return null;
+  }
+
+  @Override
+  public void remove(UUID id) {
+
+  }
+}
