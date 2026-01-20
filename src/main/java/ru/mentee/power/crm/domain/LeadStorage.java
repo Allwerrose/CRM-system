@@ -1,5 +1,7 @@
 package ru.mentee.power.crm.domain;
 
+import ru.mentee.power.crm.model.Lead;
+
 public class LeadStorage {
   private Lead[] leads = new Lead[100];
   public boolean add(Lead lead) {
