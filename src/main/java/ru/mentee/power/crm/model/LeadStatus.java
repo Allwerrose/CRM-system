@@ -1,4 +1,4 @@
-package ru.mentee.power.crm.domain;
+package ru.mentee.power.crm.model;
 
 public enum LeadStatus {
   NEW,

@@ -1,5 +1,5 @@
-package ru.mentee.power.crm.core;
-import ru.mentee.power.crm.domain.Lead;
+package ru.mentee.power.crm.domain.repository;
+import ru.mentee.power.crm.model.Lead;
 
 import java.util.*;
 

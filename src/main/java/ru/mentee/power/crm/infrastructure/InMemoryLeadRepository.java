@@ -1,7 +1,7 @@
 package ru.mentee.power.crm.infrastructure;
 
-import ru.mentee.power.crm.core.LeadRepository;
-import ru.mentee.power.crm.domain.Lead;
+import ru.mentee.power.crm.domain.repository.LeadRepository;
+import ru.mentee.power.crm.model.Lead;
 import ru.mentee.power.crm.domain.repository.Repository;
 
 import java.util.*;

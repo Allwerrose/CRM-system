@@ -1,7 +1,7 @@
 package ru.mentee.power.crm.infrastructure;
 
 import org.junit.jupiter.api.Test;
-import ru.mentee.power.crm.domain.Lead;
+import ru.mentee.power.crm.model.Lead;
 
 import java.util.Optional;
 import java.util.UUID;

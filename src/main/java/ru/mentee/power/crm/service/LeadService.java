@@ -2,10 +2,9 @@ package ru.mentee.power.crm.service;
 
 import ru.mentee.power.crm.domain.Address;
 import ru.mentee.power.crm.domain.Contact;
-import ru.mentee.power.crm.domain.Lead;
-import ru.mentee.power.crm.domain.LeadStatus;
-import ru.mentee.power.crm.core.LeadRepository;
-import ru.mentee.power.crm.domain.repository.Repository;
+import ru.mentee.power.crm.model.Lead;
+import ru.mentee.power.crm.model.LeadStatus;
+import ru.mentee.power.crm.domain.repository.LeadRepository;
 
 import java.util.*;
 
