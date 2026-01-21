@@ -64,31 +64,6 @@ class LeadServiceTest {
     assertThat(result).hasSize(2);
   }
 
-//  @Test
-//  void shouldFindLeadById() {
-//    // Given
-//    Lead created = service.addLead("find@example.com", "Company", LeadStatus.NEW);
-//
-//    // When
-//    Optional<Lead> result = service.findById(UUID.fromString(created.id()));
-//
-//    // Then
-//    assertThat(result).isPresent();
-//    assertThat(result.get().contact().email()).isEqualTo("find@example.com");
-//  }
-//
-//  @Test
-//  void shouldFindLeadByEmail() {
-//    // Given
-//    service.addLead("search@example.com", "Company", LeadStatus.NEW);
-//
-//    // When
-//    Optional<Lead> result = service.findByEmail("search@example.com");
-//
-//    // Then
-//    assertThat(result).isPresent();
-//    assertThat(result.get().company()).isEqualTo("Company");
-//  }
 
   @Test
   void shouldReturnEmpty_whenLeadNotFound() {
